@@ -1,0 +1,25 @@
+{
+  "name": "meal-planner",
+  "version": "1.0.0",
+  "description": "Meal planner is an application which stops hassle of thinking what to cook, gives approximate monthly ration in advance. It optimises meals based on the users goal of weight loss, weight gain or maintain weight. Calculates BMR and gives apporximate analysis of macros the user should take and gives meal suggetions for a month.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parse": "^0.4.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
