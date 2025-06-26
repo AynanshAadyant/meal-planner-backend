@@ -1,4 +1,4 @@
-import mongoose, { trusted } from "mongoose";
+import mongoose from "mongoose";
 
 const IngredientSchema = new mongoose.Schema( {
     name: {
@@ -149,34 +149,23 @@ const IngredientSchema = new mongoose.Schema( {
           "soy",
           "shellfish",
           "fish",
-          "sesame"],
+          "sesame", "none"],
     },
+    substitute: [ {
+        item: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Ingredient"
+        },
+        portion: {
+            type: Number
+        }
+    }],
     dietaryTags: [
         {
-            type: String, 
-            enum: [
-                "vegetarian",
-                "vegan",
-                "gluten_free",
-                "dairy_free",
-                "keto_friendly",
-                "low_carb",
-                "organic",
-                "high-protien"
-            ]
+            type: String,
+            enum: [ "high-protien", "high-carbs", "high-fibre", "diet", "keto"] 
         }
     ],
-    commonSubstitue: [
-        {
-            name: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Ingredient"
-            },
-            ratio: {
-                type: Number
-            }
-        }
-    ]
 }, {
     timestamps: true,
 })

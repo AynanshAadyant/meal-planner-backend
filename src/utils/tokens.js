@@ -19,4 +19,15 @@ const generateAccessToken = async (data) => {
   }
 };
 
-export { generateAccessToken };
+const verifyTokens = async( token ) => {
+  try{
+    const decoded = jwt.verify( token, process.env.JWT_SECRET );
+    return decoded;
+  }
+  catch( err ) {
+    console.error( "Something went wrong while decoding token" );
+    throw err;
+  }
+}
+
+export { generateAccessToken, verifyTokens };

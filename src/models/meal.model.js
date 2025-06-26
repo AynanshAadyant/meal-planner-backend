@@ -10,6 +10,7 @@ const MealSchema = new mongoose.Schema( {
         type: String,
         default: "",
         trim: true,
+        required: true
     },
     type: {
         type: String,
@@ -21,7 +22,9 @@ const MealSchema = new mongoose.Schema( {
         "dessert",
         "appetizer",
         "beverage"
-      ]
+      ],
+      required: true,
+      message: "Option not available in list"
     },
     ingredients: [
         {
@@ -162,7 +165,6 @@ const MealSchema = new mongoose.Schema( {
         }
     ],
     allergens: [{
-        items: {
             type: String,
             enum: [
                 "gluten",
@@ -174,9 +176,8 @@ const MealSchema = new mongoose.Schema( {
                 "shellfish",
                 "fish",
                 "sesame"
-            ]
-        }
-    }],
+            ]}
+        ],
     tags: [
         {
             type: String,
