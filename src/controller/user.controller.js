@@ -112,7 +112,7 @@ const login = async( req, res ) => {
 
     return res.cookie( "ACCESS_TOKEN", accessToken, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.STATUS === 'prod',
       sameSite: "Lax",
       expiresIn : process.env.ACCESS_TOKEN_EXPIRY
     })
