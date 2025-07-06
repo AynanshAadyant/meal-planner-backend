@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 import { Meal } from "./meal.model.js";
 
 const MealPlanSchema = new mongoose.Schema({
+  user : {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
   month: {
     type: Number,
     min: 1,

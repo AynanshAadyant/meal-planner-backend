@@ -6,7 +6,8 @@ import UserRouter from "./src/routes/user.route.js";
 import MealRouter from "./src/routes/meal.route.js";
 import MealPlanRouter from "./src/routes/mealPlan.routes.js";
 import RationRouter from "./src/routes/ration.route.js";
-import SuggestionRouter from "./src/routes/suggestion.route.js"
+import SuggestionRouter from "./src/routes/suggestion.route.js";
+import AdminRouter from "./src/routes/admin.routes.js"
 
 dotenv.config( {} );
 
@@ -26,5 +27,6 @@ app.use( "/api/v1/meal", MealRouter );
 app.use( "/api/v1/mealPlan", MealPlanRouter );
 app.use( "/api/v1/ration", RationRouter );
 app.use( "/api/v1/suggestion", SuggestionRouter );
+app.use( "/api/v1/admin", AdminRouter)
 
 export default app;

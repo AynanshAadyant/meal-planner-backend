@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 //stores the data for monthly ingredient consumption
 
 const RequiredIngredientsSchema = new mongoose.Schema( {
+    user : {
+        type: mongoose.Types.ObjectId,
+        ref: "User"
+    },
     year: {
         type: Number,
         min: 2025,

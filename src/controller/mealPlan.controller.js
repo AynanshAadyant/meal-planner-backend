@@ -3,6 +3,7 @@ import { MealPlan } from "../models/mealPlan.model.js";
 const createMealPlan = async (req, res) => {
   try {
     const { year, month, date, mealType, meal } = req.body;
+    const user = req.user;
 
     if (!year || !month || !date || !mealType || !meal) {
       return res.status(400).json({
@@ -13,11 +14,12 @@ const createMealPlan = async (req, res) => {
     }
 
     // Check for existing plan
-    const existingPlan = await MealPlan.findOne({ year, month, date });
+    const existingPlan = await MealPlan.findOne({ user, year, month, date });
 
     if (!existingPlan) {
       // Create new plan
       const newPlan = await MealPlan.create({
+        user,
         year,
         month,
         date,
@@ -102,6 +104,7 @@ const getMealPlanByDate = async( req, res ) => {
     }
 
     const mealPlan = await MealPlan.findOne( {
+        user : req.user,
         year : year,
         month : month,
         date : date
@@ -134,7 +137,7 @@ const updateMealPlan = async( req, res ) => {
         })
     }
 
-    const mealPlan = await MealPlan.findById( mealPlanId );
+    const mealPlan = await MealPlan.findById( MealPlanId );
     if( !mealPlan ) {
         return res.status( 404 ).json( {
             success: false,

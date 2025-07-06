@@ -2,6 +2,7 @@ import { RequiredIngredient } from "../models/requiredIngredient.model.js";
 
 const createRequirement = async( req, res ) => {
     const { year, month, ingredient, quantity, unit } = req.body;
+    const user = req.user;
     if( !year || !month || !ingredient || !quantity || !unit ) {
         return res.status( 500 ).json( {
             success: false,
@@ -12,7 +13,7 @@ const createRequirement = async( req, res ) => {
 
     //search for entry of ingredient on the same day, if it exists then update otherwise create new entry
 
-    const existing = await RequiredIngredient.findOne( { year, month, ingredient } );
+    const existing = await RequiredIngredient.findOne( { user, year, month, ingredient } );
     if( !existing ) {
         const createRequirement = await RequiredIngredient.create( {
             year,
@@ -51,7 +52,7 @@ const getIngredients = async( req, res ) => {
         })
     }
 
-    const ration = await RequiredIngredient.find( { year: year, month : month } );
+    const ration = await RequiredIngredient.find( { user : req.user, year: year, month : month } );
     if( !ration ) {
         return res.status( 500 ).json( {
             success: false,

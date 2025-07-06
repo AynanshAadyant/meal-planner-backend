@@ -2,6 +2,9 @@ import { User } from "../models/user.model.js";
 import { calculateBMI, calculateBMR } from "../utils/bmi.js";
 import { comparePasswords, hashPassword } from "../utils/password.js"
 import { generateAccessToken } from "../utils/tokens.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const signUp = async (req, res) => {
   try {
@@ -50,7 +53,8 @@ const signUp = async (req, res) => {
         protien,
         carbohydrates: cards,
         fats
-      }
+      },
+      role : ( email === process.env.ADMIN ) ? "Admin" : "User"
     });
 
     await newUser.save();

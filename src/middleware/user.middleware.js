@@ -39,6 +39,7 @@ const protectRoute = async (req, res, next) => {
     }
 
     req.user = verifyUser;
+    req.admin = false;
     next();
   } catch (err) {
     console.log("ACCESS TOKEN error:", err);
