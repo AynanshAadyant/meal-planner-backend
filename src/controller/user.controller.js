@@ -108,7 +108,6 @@ const login = async( req, res ) => {
       return res.status( 400 ).json( {
         success: false,
         status: 400,
-        sameSite: "Node",
         message: "Wrong password"
       })
     }
@@ -118,6 +117,7 @@ const login = async( req, res ) => {
     return res.cookie( "ACCESS_TOKEN", accessToken, {
       httpOnly: true,
       secure: true,
+      sameSite: "None",
       expiresIn : process.env.ACCESS_TOKEN_EXPIRY
     })
     .status( 200 )
