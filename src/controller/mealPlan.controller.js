@@ -1,36 +1,57 @@
-import { MealPlan, MealPlan } from "../models/mealPlan.model";
+import { MealPlan } from "../models/mealPlan.model.js";
 
-const createMealPlan = async( req, res ) => {
+const createMealPlan = async (req, res) => {
+  try {
+    const { year, month, date, mealType, meal } = req.body;
 
-    const { year, month, date, meals } = req.body;
-
-    if( !year || !month || !date || !meals ) {
-        return res.status( 500 ).json( {
-            success: false,
-            status: 500,
-            message: "Fields empty"
-        })
+    if (!year || !month || !date || !mealType || !meal) {
+      return res.status(400).json({
+        success: false,
+        status: 400,
+        message: "Fields empty",
+      });
     }
 
-    const checkDuplicate = await MealPlan.find( { year: year, month: month, date: date } );
-    if( checkDuplicate ) {
-        return res.status( 500 ).json( {
-            success:  false,
-            status: 500,
-            message: "Plan already present for date "
-        })
-    }
-    
-    const mealPlan = await MealPlan.create( {
-        month, year, date, meals
-    })
+    // Check for existing plan
+    const existingPlan = await MealPlan.findOne({ year, month, date });
 
-    return res.status( 200 ).json( {
+    if (!existingPlan) {
+      // Create new plan
+      const newPlan = await MealPlan.create({
+        year,
+        month,
+        date,
+        meals: [{ mealType, meal }],
+      });
+
+      return res.status(201).json({
+        success: true,
+        status: 201,
+        message: "Meal Plan created successfully",
+        body: newPlan
+      });
+    } else {
+      // Append to existing plan
+      existingPlan.meals.push({ mealType, meal });
+      await existingPlan.save();
+
+      return res.status(200).json({
         success: true,
         status: 200,
-        message: "Meal Plan created successfully"
-    })
-}
+        message: "Meal added to existing Meal Plan",
+        body: existingPlan
+      });
+    }
+  } catch (err) {
+    console.error("Error in createMealPlan:", err);
+    return res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Internal server error",
+    });
+  }
+};
+
 
 const getAllMealPlans = async( req, res ) => {
     const mealPlan = await MealPlan.find();
@@ -66,6 +87,38 @@ const getMealPlanById = async( req, res ) => {
         success: true,
         status: 200,
         message: "Meal Plan fetched successfully",
+        body: mealPlan
+    })
+}
+
+const getMealPlanByDate = async( req, res ) => {
+    const { year, month, date} = req.params;
+    if( !year || !month || !date ) {
+        return res.status( 500 ).json( {
+            success: false,
+            status: 500,
+            message: "Fields are empty"
+        })
+    }
+
+    const mealPlan = await MealPlan.findOne( {
+        year : year,
+        month : month,
+        date : date
+    } )
+
+    if( !mealPlan ) {
+        return res.status( 404 ).json( {
+            success: false,
+            status: 404,
+            message: "Meal Plan on the given date no found"
+        })
+    }
+    
+    return res.status(200).json( {
+        success: true,
+        status: 200,
+        message: "Meal plan successfully fetched",
         body: mealPlan
     })
 }
@@ -115,4 +168,4 @@ const deleteMealPlan = async( req, res ) => {
     }
 }
 
-export { createMealPlan, getAllMealPlans, getMealPlanById, deleteMealPlan, updateMealPlan }
+export { createMealPlan, getMealPlanByDate, getAllMealPlans, getMealPlanById, deleteMealPlan, updateMealPlan }

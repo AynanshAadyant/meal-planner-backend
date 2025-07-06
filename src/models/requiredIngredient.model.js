@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-//stores the data for monthly ingredient demand
+//stores the data for monthly ingredient consumption
 
 const RequiredIngredientsSchema = new mongoose.Schema( {
     year: {
@@ -10,11 +10,6 @@ const RequiredIngredientsSchema = new mongoose.Schema( {
         type: Number,
         min: 1,
         max: 12
-    },
-    people: { //Number people this serves for a month
-        type: Number,
-        min: 1,
-        default: 1
     },
     ingredient: {
         type: mongoose.Schema.Types.ObjectId,

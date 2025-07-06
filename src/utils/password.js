@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config( {} );
 
 const hashPassword = async( password ) => {
-    const hash = await bcrypt.hash( password, process.env.SALT_ROUNDS );
+    const hash = await bcrypt.hash( password, 12 );
     
     return hash;
 

@@ -1,4 +1,4 @@
-import { Meal } from "../models/meal.model";
+import { Meal } from "../models/meal.model.js";
 import { Ingredient } from "../models/ingredient.model.js";
 import { calculateNutrition } from "../utils/nutrition.js";
 
@@ -201,4 +201,55 @@ const deleteMeal = async( req, res ) => {
     })
 }
 
-export { createMeal, getAllMeals, getMealById, updateMeal, deleteMeal }
+const getMealSuggestion = async (req, res) => {
+  try {
+    const { calories = 0, protien = 0, carbohydrates = 0, fats = 0 } = req.body;
+
+    // Fetch all meals from DB
+    const allMeals = await Meal.find();
+
+    if (!allMeals || allMeals.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No meals found in the database",
+      });
+    }
+
+    // Score each meal by sum of absolute differences in nutrition
+    const scoredMeals = allMeals.map((meal) => {
+      const m = meal.nutrition;
+
+      const score =
+        Math.abs((m.calories || 0) - calories) +
+        Math.abs((m.protien || 0) - protien) +
+        Math.abs((m.carbohydrates || 0) - carbohydrates) +
+        Math.abs((m.fats || 0) - fats);
+
+      return {
+        meal,
+        score,
+      };
+    });
+
+    // Sort meals by increasing score (i.e., better match first)
+    scoredMeals.sort((a, b) => a.score - b.score);
+
+    // Limit top N suggestions (e.g., 5)
+    const suggestions = scoredMeals.slice(0, 5).map((entry) => entry.meal);
+
+    return res.status(200).json({
+      success: true,
+      message: "Meal suggestions based on nutrition",
+      body: suggestions,
+    });
+
+  } catch (err) {
+    console.error("Error in getMealSuggestion:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error while fetching meal suggestions",
+    });
+  }
+};
+
+export { createMeal, getAllMeals, getMealById, getMealSuggestion, updateMeal, deleteMeal }

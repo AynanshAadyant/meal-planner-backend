@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: [ "Loss", "Gain", "Maintain" ],
         required: true,
-        default: "Weight-maintain"
+        default: "Maintain"
     },
     nutrition :{ //required nutrition
         calories: {

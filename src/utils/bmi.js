@@ -42,8 +42,8 @@ const calculateBMR = ( height ,weight, heightUnit, weightUnit, gender, activityL
     const tdee = ( bmr * activityFactor ) + goalFactor;
 
     const calories = tdee;
-    const protien = ( 0.3 * calories ) / 4;
-    const cards = ( 0.5 * calories ) / 4;
+    const protien = ( 0.2 * calories ) / 4;
+    const cards = ( 0.6 * calories ) / 4;
     const fats = ( 0.2 * calories ) / 9;
 
     return { calories, protien, cards, fats };

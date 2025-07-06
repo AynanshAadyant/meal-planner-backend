@@ -108,20 +108,13 @@ const login = async( req, res ) => {
       })
     }
 
-    const safeUser = await User.findById( user._id).select( "-password" );
-    if( !safeUser ) {
-      return res.status( 500 ).json( {
-        success: false,
-        status: 500,
-        message: "Error while retrieving user for token generation"
-      })
-    }
-    const accessToken = generateAccessToken( safeUser.select( "-password" ) );
+    const accessToken = await generateAccessToken( {_id: user._id} );
 
     return res.cookie( "ACCESS_TOKEN", accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: 'lax'
+      sameSite: "Lax",
+      expiresIn : process.env.ACCESS_TOKEN_EXPIRY
     })
     .status( 200 )
     .json( {
@@ -159,6 +152,43 @@ const getUser = async( req, res ) => {
   })
 }
 
+const changeGoals = async( req, res ) => {
+  const { activityLevel, dietaryGoal } = req.body;
+
+  if( !activityLevel || !dietaryGoal ) {
+    return res.status( 500 ).json( {
+      status: 500,
+      success: false,
+      message: "Fields are empty"
+    })
+  }
+
+  const bmi = calculateBMI( req.user.height, req.user.heightUnit, req.user.weight, req.user.weightUnit );
+
+  const { calories, protien, cards, fats } = calculateBMR( req.user.height, req.user.weight, req.user.heightUnit, req.user.weightUnit, req.user.gender, activityLevel, dietaryGoal, req.user.age);
+
+
+  await User.findByIdAndUpdate( req.user._id, 
+    { 
+      activityLevel : activityLevel, 
+      goals: dietaryGoal,
+      bmi: bmi,
+      nutrition: {
+        calories, 
+        protien,
+        carbohydrates: cards,
+        fats
+      }
+    } );
+
+  return res.status( 200 ).json( {
+    success: true,
+    status: 200,
+    message: "Activity Levels and Goals updated" 
+  })
+  
+}
+
 const logOut = async( req, res ) => {
   return res
   .cookie( accessToken )
@@ -169,4 +199,4 @@ const logOut = async( req, res ) => {
   })
 }
 
-export {signUp, login, getUser, logOut }
+export {signUp, login, getUser, changeGoals, logOut }
