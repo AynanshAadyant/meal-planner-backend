@@ -4,7 +4,7 @@ const IngredientSchema = new mongoose.Schema( {
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
     },
     category: {
         type: String, 
@@ -21,6 +21,7 @@ const IngredientSchema = new mongoose.Schema( {
         "beverages",
         "nuts_seeds",
         "legumes",
+        "sweeteners",
         "other"]
     },
     baseUnit: {
@@ -143,6 +144,8 @@ const IngredientSchema = new mongoose.Schema( {
         type: String,
         enum: ["gluten",
           "dairy",
+          "milk",
+          "egg",
           "eggs",
           "nuts",
           "peanuts",
@@ -163,12 +166,17 @@ const IngredientSchema = new mongoose.Schema( {
     dietaryTags: [
         {
             type: String,
-            enum: [ "high-protien", "high-carbs", "high-fibre", "diet", "keto"] 
         }
     ],
 }, {
     timestamps: true,
 })
+
+IngredientSchema.pre( 'save' , async function( next ) {
+    this.name = this.name.toLowerCase();
+    next();
+})
+
 
 const Ingredient = mongoose.model( "Ingredient", IngredientSchema );
 

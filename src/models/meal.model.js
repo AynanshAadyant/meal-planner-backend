@@ -46,7 +46,6 @@ const MealSchema = new mongoose.Schema( {
             calories: {
                 type: Number,
                 min: 0,
-                required: true,
             },
             carbohydrates: {
                 type: Number,
@@ -152,16 +151,7 @@ const MealSchema = new mongoose.Schema( {
     dietaryTags: [
         {
             type: String, 
-            enum: [
-                    "vegetarian",
-                    "vegan",
-                    "gluten_free",
-                    "dairy_free",
-                    "keto",
-                    "low_carb",
-                    "low_fat",
-                    "high_protein"
-            ]
+            
         }
     ],
     allergens: [{
@@ -186,6 +176,66 @@ const MealSchema = new mongoose.Schema( {
 }, {
     timestamps : true
 })
+
+MealSchema.pre("save", async function (next) {
+  try {
+    const Ingredient = mongoose.model("Ingredient");
+
+    const totalMacros = {
+      calories: 0,
+      carbohydrates: 0,
+      protien: 0,
+      fats: 0,
+      fibre: 0,
+      sodium: 0,
+    };
+
+    const totalMicros = {
+      vitaminA: 0, vitaminB1: 0, vitaminB2: 0, vitaminB3: 0, vitaminB5: 0,
+      vitaminB6: 0, vitaminB7: 0, vitaminB9: 0, vitaminB12: 0, vitaminC: 0,
+      vitaminD: 0, vitaminE: 0, vitaminK: 0, iron: 0, magnesium: 0, zinc: 0,
+      calcium: 0, potassium: 0,
+    };
+
+    const missingIngredients = [];
+
+    for (const ing of this.ingredients) {
+      const ingredientDoc = await Ingredient.findById(ing.items);
+
+      if (!ingredientDoc) {
+        missingIngredients.push(ing.items);
+        continue;
+      }
+
+      const factor = ing.amount / 100; // scale factor: nutrition is per 100g/ml
+
+      const { macros = {}, micros = {} } = ingredientDoc.nutrition || {};
+
+      for (const key in totalMacros) {
+        totalMacros[key] += (macros[key] || 0) * factor;
+      }
+
+      for (const key in totalMicros) {
+        totalMicros[key] += (micros[key] || 0) * factor;
+      }
+    }
+
+    this.nutrition = {
+      macros: totalMacros,
+      micros: totalMicros,
+    };
+
+    if (missingIngredients.length > 0) {
+      console.warn("⚠️ Missing ingredient(s) during meal save:", missingIngredients);
+    }
+
+    next();
+  } catch (err) {
+    console.error("❌ Error in Meal pre-save hook:", err);
+    next(err);
+  }
+});
+
 
 const Meal = mongoose.model( "Meal", MealSchema );
 

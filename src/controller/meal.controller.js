@@ -195,7 +195,7 @@ const deleteMeal = async( req, res ) => {
     }
 
     return res.status( 200 ).json( {
-        success: false, 
+        success: true, 
         status: 200,
         message: "Meal deleted successfully"
     })

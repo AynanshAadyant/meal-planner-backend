@@ -1,4 +1,4 @@
-import { Ingredient } from "../models/ingredient.model";
+import { Ingredient } from "../models/ingredient.model.js";
 
 const registerIngredient = async ( req, res) => {
     const { name, category, baseUnit, nutrition, allergen, dietaryTags } = req.body;

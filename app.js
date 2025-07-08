@@ -8,6 +8,7 @@ import MealPlanRouter from "./src/routes/mealPlan.routes.js";
 import RationRouter from "./src/routes/ration.route.js";
 import SuggestionRouter from "./src/routes/suggestion.route.js";
 import AdminRouter from "./src/routes/admin.routes.js"
+import IngredientRouter from "./src/routes/ingredient.route.js";
 
 dotenv.config( {} );
 
